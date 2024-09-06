@@ -2,6 +2,7 @@ from fastapi import FastAPI
 
 from src.db.database import database
 
+
 app = FastAPI()
 
 
