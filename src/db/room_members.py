@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, ForeignKey
+from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import relationship
+
 from .database import Base
 
 
@@ -14,4 +15,4 @@ class RoomMembers(Base):
     user = relationship('User', back_populates='rooms')
 
     def __repr__(self):
-        return f"<RoomMembers(room_id={self.room_id}, user_id={self.user_id})>"
+        return f'<RoomMembers(room_id={self.room_id}, user_id={self.user_id})>'

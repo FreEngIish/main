@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, ForeignKey, Text, DateTime
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+
 from .database import Base
 
 
@@ -17,4 +18,4 @@ class Message(Base):
     user = relationship('User', back_populates='messages')
 
     def __repr__(self):
-        return f"<Message(user_id={self.user_id}, room_id={self.room_id}, message_text={self.message_text})>"
+        return f'<Message(user_id={self.user_id}, room_id={self.room_id}, message_text={self.message_text})>'

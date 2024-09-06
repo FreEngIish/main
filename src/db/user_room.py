@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+
 from .database import Base
 
 
@@ -21,4 +22,4 @@ class UserRoom(Base):
     creator = relationship('User', back_populates='user_rooms')
 
     def __repr__(self):
-        return f"<UserRoom(room_name={self.room_name}, creator={self.creator_id})>"
+        return f'<UserRoom(room_name={self.room_name}, creator={self.creator_id})>'
