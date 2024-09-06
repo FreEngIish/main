@@ -1,11 +1,8 @@
 from fastapi import FastAPI
 
-from src.db.database import database, engine, metadata
-
+from src.db.database import database
 
 app = FastAPI()
-
-metadata.create_all(engine)
 
 
 @app.on_event('startup')
