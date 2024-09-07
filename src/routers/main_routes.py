@@ -3,8 +3,9 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from src.auth import get_db
-from src.db.database import database, init_db
+from src.service.database_service import get_db
+from src.db.database import database
+from src.service.database_service import init_db
 from src.service.auth_service import get_current_user
 
 

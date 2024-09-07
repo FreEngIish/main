@@ -10,6 +10,7 @@ from starlette import status
 from src.db.database import AsyncSessionLocal
 from src.db.models.user import User
 from src.service.auth_service import authenticate_user, bcrypt_context, create_access_token
+from src.service.database_service import get_db
 
 router = APIRouter(
     prefix='/auto',
@@ -25,9 +26,7 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
-async def get_db() -> AsyncGenerator[AsyncSession, None]:
-    async with AsyncSessionLocal() as session:
-        yield session
+
 
 db_dependency = Annotated[AsyncSession, Depends(get_db)]
 
@@ -40,14 +39,14 @@ async def create_user(create_user_request: CreateUserRequest, db: db_dependency)
     )
 
     db.add(create_user_model)
-    await db.commit()  # Обязательно используйте await для асинхронных операций
-    await db.refresh(create_user_model)  # Обязательно используйте await для асинхронных операций
+    await db.commit()
+    await db.refresh(create_user_model)
     return create_user_model
 
 @router.post('/token', response_model=Token)
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
                                  db: db_dependency):
-    user = await authenticate_user(form_data.username, form_data.password, db)  # Не забудьте использовать await
+    user = await authenticate_user(form_data.username, form_data.password, db)
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail='Could not validate user')
