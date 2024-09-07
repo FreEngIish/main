@@ -5,12 +5,13 @@ from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from starlette import status
-from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+from starlette import status
 
 from src.db.models.user import User
 from src.settings import settings
+
 
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auto/token')
@@ -28,12 +29,12 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate user.')
 
 async def authenticate_user(username: str, password: str, db: AsyncSession) -> Optional[User]:
-    # Создаем запрос с использованием select()
+
     stmt = select(User).filter(User.username == username)
-    
-    # Выполняем запрос и получаем результаты
+
+
     result = await db.execute(stmt)
-    user = result.scalars().first()  # Получаем первого пользователя
+    user = result.scalars().first()
 
     if not user:
         return None

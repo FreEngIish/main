@@ -3,10 +3,9 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from src.service.database_service import get_db
 from src.db.database import database
-from src.service.database_service import init_db
 from src.service.auth_service import get_current_user
+from src.service.database_service import get_db, init_db
 
 
 router = APIRouter()

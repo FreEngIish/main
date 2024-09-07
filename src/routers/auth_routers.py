@@ -1,17 +1,16 @@
 from datetime import timedelta
-from typing import Annotated, AsyncGenerator
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
-from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from src.db.database import AsyncSessionLocal
 from src.db.models.user import User
+from src.schemas.auth_schemas import CreateUserRequest, Token
 from src.service.auth_service import authenticate_user, bcrypt_context, create_access_token
 from src.service.database_service import get_db
-from src.schemas.auth_schemas import CreateUserRequest, Token
+
 
 router = APIRouter(
     prefix='/auto',

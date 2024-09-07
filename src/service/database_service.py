@@ -1,7 +1,9 @@
-from sqlalchemy.ext.asyncio import AsyncSession
 from typing import AsyncGenerator
 
-from src.db.database import engine, Base, AsyncSessionLocal
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.db.database import AsyncSessionLocal, Base, engine
+
 
 async def init_db():
     async with engine.begin() as conn:

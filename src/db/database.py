@@ -1,9 +1,10 @@
+
 from databases import Database
 from sqlalchemy import MetaData
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from typing import AsyncGenerator
+
 
 DATABASE_URL = 'sqlite+aiosqlite:///./test.db'
 
