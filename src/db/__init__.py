@@ -5,4 +5,3 @@ from .models.room_members import RoomMembers
 from .models.message import Message
 
 # Создаем таблицы
-Base.metadata.create_all(bind=engine)
