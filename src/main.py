@@ -4,7 +4,7 @@ from fastapi import Depends, FastAPI, HTTPException, status
 from sqlalchemy.orm import Session
 
 from src.db.database import SessionLocal, database, engine  # noqa: F401
-from src.db.user import User  # noqa: F401
+from src.db.models.user import User  # noqa: F401
 from src import auth
 from src.auth import get_current_user
 
