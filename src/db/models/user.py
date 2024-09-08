@@ -2,7 +2,7 @@ from sqlalchemy import Boolean, Column, DateTime, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-from .database import Base
+from src.db.database import Base
 
 
 class User(Base):
@@ -11,7 +11,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     email = Column(String, unique=True, nullable=False)
     username = Column(String(150), unique=True, nullable=False)
-    password = Column(String, nullable=False)
+    hashed_password = Column(String, nullable=False)
     first_name = Column(String(30))
     last_name = Column(String(30))
     date_joined = Column(DateTime(timezone=True), server_default=func.now())

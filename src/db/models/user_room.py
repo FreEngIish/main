@@ -2,7 +2,7 @@ from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-from .database import Base
+from src.db.database import Base
 
 
 class UserRoom(Base):
@@ -20,6 +20,8 @@ class UserRoom(Base):
     status = Column(String(10), nullable=False, default='Active')
 
     creator = relationship('User', back_populates='user_rooms')
+    members = relationship('RoomMembers', back_populates='room')
+    messages = relationship('Message', back_populates='room')
 
     def __repr__(self):
         return f'<UserRoom(room_name={self.room_name}, creator={self.creator_id})>'
