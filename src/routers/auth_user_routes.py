@@ -1,17 +1,12 @@
-from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, HTTPException, status
 
 from src.db.__init__ import init_db
-from src.db.database import database, get_db
-from src.service.auth_service import AuthService
+from src.db.database import database
+from src.dependencies import db_dependency, user_dependency
 
 
 router = APIRouter()
-
-db_dependency = Annotated[Session, Depends(get_db)]
-user_dependency = Annotated[dict, Depends(AuthService.get_current_user)]
 
 @router.get('/', status_code=status.HTTP_200_OK)
 async def user(user: user_dependency, db: db_dependency):  # noqa: ARG001
