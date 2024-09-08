@@ -16,7 +16,6 @@ from src.settings import settings
 class AuthService:
     def __init__(self):
         self.bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
-        self.oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
 
     async def get_current_user(token: Annotated[
         str, Depends(OAuth2PasswordBearer(tokenUrl='auth/token'))

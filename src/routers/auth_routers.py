@@ -3,10 +3,9 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from src.db.database import get_db
+from src.dependencies import db_dependency, get_user_service
 from src.schemas.auth_schemas import CreateUserRequest, Token
 from src.service.auth_service import AuthService
 from src.service.user_service import UserService
@@ -16,13 +15,6 @@ router = APIRouter(
     prefix='/auth',
     tags=['auth']
 )
-
-db_dependency = Annotated[AsyncSession, Depends(get_db)]
-
-
-async def get_user_service(db: AsyncSession = Depends(get_db)) -> UserService:
-    """Dependency for getting the UserService instance."""
-    return UserService(db)
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED)
