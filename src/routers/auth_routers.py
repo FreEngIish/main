@@ -6,10 +6,10 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
+from src.db.database import get_db
 from src.db.models.user import User
 from src.schemas.auth_schemas import CreateUserRequest, Token
 from src.service.auth_service import authenticate_user, bcrypt_context, create_access_token
-from src.service.database_service import get_db
 
 
 router = APIRouter(
