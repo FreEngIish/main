@@ -46,9 +46,9 @@ class AuthService:
         encode.update({'exp': expires})
         return jwt.encode(encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
-    def create_refresh_token(self, username: str, user_id: int) -> str:
+    def create_refresh_token(self, username: str, user_id: int, expires_delta) -> str:
         encode = {'sub': username, 'id': user_id}
-        expires = datetime.utcnow() + timedelta(days=30)  # Refresh token expires in 30 days
+        expires = datetime.utcnow() + expires_delta
         encode.update({'exp': expires})
         return jwt.encode(encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 

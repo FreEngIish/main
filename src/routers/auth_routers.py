@@ -33,7 +33,7 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail='Could not validate user')
     access_token = auth_service.create_access_token(user.username, user.id, timedelta(minutes=20))
-    refresh_token = auth_service.create_refresh_token(user.username, user.id)
+    refresh_token = auth_service.create_refresh_token(user.username, user.id, timedelta(days=30))
     return {'access_token': access_token, 'refresh_token': refresh_token, 'token_type': 'bearer'}
 
 
@@ -45,5 +45,5 @@ async def refresh_access_token(request: RefreshTokenRequest, db: db_dependency):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail='Invalid refresh token')
     access_token = auth_service.create_access_token(user_data['username'], user_data['id'], timedelta(minutes=20))
-    refresh_token = auth_service.create_refresh_token(user_data['username'], user_data['id'])
+    refresh_token = auth_service.create_refresh_token(user_data['username'], user_data['id'], timedelta(days=30))
     return {'access_token': access_token, 'refresh_token': refresh_token, 'token_type': 'bearer'}
