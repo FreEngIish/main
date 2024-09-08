@@ -6,7 +6,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from starlette import status
 
 from src.dependencies import db_dependency, get_user_service
-from src.schemas.auth_schemas import CreateUserRequest, Token
+from src.schemas.auth_schemas import Token
+from src.schemas.user_schemas import CreateUserRequest
 from src.service.auth_service import AuthService
 from src.service.user_service import UserService
 
