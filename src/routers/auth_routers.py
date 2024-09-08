@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from starlette import status
 
 from src.dependencies import db_dependency, get_user_service
-from src.schemas.auth_schemas import CreateUserRequest, Token
+from src.schemas.auth_schemas import CreateUserRequest, RefreshTokenRequest, Token
 from src.service.auth_service import AuthService
 from src.service.user_service import UserService
 
@@ -32,6 +32,18 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail='Could not validate user')
+    access_token = auth_service.create_access_token(user.username, user.id, timedelta(minutes=20))
+    refresh_token = auth_service.create_refresh_token(user.username, user.id)
+    return {'access_token': access_token, 'refresh_token': refresh_token, 'token_type': 'bearer'}
+
+
+@router.post('/refresh', response_model=Token)
+async def refresh_access_token(request: RefreshTokenRequest, db: db_dependency):  # noqa: ARG001
     auth_service = AuthService()
-    token = auth_service.create_access_token(user.username, user.id, timedelta(minutes=20))
-    return {'access_token': token, 'token_type': 'bearer'}
+    user_data = auth_service.verify_refresh_token(request.refresh_token)
+    if not user_data:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail='Invalid refresh token')
+    access_token = auth_service.create_access_token(user_data['username'], user_data['id'], timedelta(minutes=20))
+    refresh_token = auth_service.create_refresh_token(user_data['username'], user_data['id'])
+    return {'access_token': access_token, 'refresh_token': refresh_token, 'token_type': 'bearer'}
