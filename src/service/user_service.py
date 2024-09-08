@@ -4,18 +4,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.db.models.user import User
 from src.repositories.user_repository import UserRepository
 from src.schemas.auth_schemas import CreateUserRequest, ShowUser
-from src.service.auth_service import bcrypt_context
+from src.service.auth_service import AuthService
 
 
 class UserService:
     def __init__(self, db: AsyncSession):
         self.db_session = db
         self.user_repository = UserRepository(db)
+        self.auth_service = AuthService()
 
     async def create_user(self, create_user_request: CreateUserRequest) -> ShowUser:
         """Creates a new user in the database after validation checks."""
 
-        # Проверка существующего пользователя по username
+        # Check for existing user by username
         existing_user_by_username = await self.user_repository.get_user_by_username(
             create_user_request.username
         )
@@ -25,7 +26,7 @@ class UserService:
                 detail='Username already registered'
             )
 
-        # Проверка существующего пользователя по email
+        # Check for existing user by email
         existing_user_by_email = await self.user_repository.get_user_by_email(
             create_user_request.email
         )
@@ -35,14 +36,14 @@ class UserService:
                 detail='Email already registered'
             )
 
-        # Создание пользователя
+        # Create new user
         new_user = User(
             username=create_user_request.username,
-            hashed_password=bcrypt_context.hash(create_user_request.password),
+            hashed_password=self.auth_service.bcrypt_context.hash(create_user_request.password),
             email=create_user_request.email
         )
 
-        # Сохранение пользователя в базе данных через репозиторий
+        # Save user to the database through repository
         saved_user = await self.user_repository.add_user_to_db(new_user)
 
         return ShowUser(

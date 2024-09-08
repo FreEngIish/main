@@ -5,13 +5,13 @@ from sqlalchemy.orm import Session
 
 from src.db.__init__ import init_db
 from src.db.database import database, get_db
-from src.service.auth_service import get_current_user
+from src.service.auth_service import AuthService
 
 
 router = APIRouter()
 
 db_dependency = Annotated[Session, Depends(get_db)]
-user_dependency = Annotated[dict, Depends(get_current_user)]
+user_dependency = Annotated[dict, Depends(AuthService.get_current_user)]
 
 @router.get('/', status_code=status.HTTP_200_OK)
 async def user(user: user_dependency, db: db_dependency):  # noqa: ARG001
