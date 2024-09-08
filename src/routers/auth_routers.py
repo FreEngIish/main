@@ -7,30 +7,30 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from src.db.database import get_db
-from src.db.models.user import User
 from src.schemas.auth_schemas import CreateUserRequest, Token
-from src.service.auth_service import authenticate_user, bcrypt_context, create_access_token
+from src.service.auth_service import authenticate_user, create_access_token
+from src.service.user_service import UserService
 
 
 router = APIRouter(
-    prefix='/auto',
+    prefix='/auth',
     tags=['auth']
 )
 
 db_dependency = Annotated[AsyncSession, Depends(get_db)]
 
-@router.post('/', status_code=status.HTTP_201_CREATED)
-async def create_user(create_user_request: CreateUserRequest, db: db_dependency):
-    create_user_model = User(
-        username=create_user_request.username,
-        hashed_password=bcrypt_context.hash(create_user_request.password),
-        email=create_user_request.email
-    )
 
-    db.add(create_user_model)
-    await db.commit()
-    await db.refresh(create_user_model)
-    return create_user_model
+async def get_user_service(db: AsyncSession = Depends(get_db)) -> UserService:
+    """Зависимость для получения экземпляра UserService."""
+    return UserService(db)
+
+
+@router.post('/', status_code=status.HTTP_201_CREATED)
+async def create_user(create_user_request: CreateUserRequest,
+                      user_service: UserService = Depends(get_user_service)):
+    """Создает нового пользователя с использованием сервисного слоя."""
+    return await user_service.create_user(create_user_request)
+
 
 @router.post('/token', response_model=Token)
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
