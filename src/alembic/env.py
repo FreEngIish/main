@@ -9,6 +9,9 @@ from alembic import context
 from config import settings
 from db.database import Base
 from db.models.user import User  # noqa
+from db.models.user_room import UserRoom   # noqa
+from db.models.message import Message  # noqa
+from db.models.room_members import RoomMembers  # noqa
 
 
 # this is the Alembic Config object, which provides

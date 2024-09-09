@@ -3,9 +3,9 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.db.database import get_db
-from src.service.auth_service import AuthService
-from src.service.user_service import UserService
+from db.database import get_db
+from service.auth_service import AuthService
+from service.user_service import UserService
 
 
 # Dependency for getting the UserService instance

@@ -9,8 +9,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from starlette import status
 
-from src.db.models.user import User
-from src.settings import settings
+from db.models.user import User
+from config import settings
 
 
 class AuthService:

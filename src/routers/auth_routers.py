@@ -5,10 +5,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette import status
 
-from src.dependencies import db_dependency, get_user_service
-from src.schemas.auth_schemas import CreateUserRequest, Token
-from src.service.auth_service import AuthService
-from src.service.user_service import UserService
+from dependencies import db_dependency, get_user_service
+from schemas.auth_schemas import CreateUserRequest, Token
+from service.auth_service import AuthService
+from service.user_service import UserService
 
 
 router = APIRouter(

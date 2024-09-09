@@ -3,7 +3,7 @@ from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from src.db.models.user import User
+from db.models.user import User
 
 
 class UserRepository:
