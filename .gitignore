@@ -70,6 +70,9 @@ db.sqlite3-journal
 # IDE - PyCharm
 .idea/
 *.iml
+misc.xml
+fastApiProject3.iml
+.iml
 
 # Flask stuff:
 instance/
@@ -134,7 +137,7 @@ celerybeat.pid
 # Environments
 /env
 *.env
-.env
+src/.env
 .venv
 env/
 venv/
