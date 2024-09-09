@@ -10,6 +10,7 @@ class CreateUserRequest(BaseModel):
 
 class Token(BaseModel):
     access_token: str
+    refresh_token: str
     token_type: str
 
 class ShowUser(BaseModel):
@@ -21,3 +22,6 @@ class ShowUser(BaseModel):
 
     class Config:
         orm_mode = True
+
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str
