@@ -6,11 +6,7 @@ from jose import jwt
 from config import settings
 
 
-def create_access_token(username: str, user_id: int, expires_delta: Optional[timedelta] = None) -> str:
-    data = {
-        'sub': username,
-        'id': user_id
-    }
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
     else:

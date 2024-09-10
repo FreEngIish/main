@@ -1,5 +1,11 @@
+import logging
+
 from passlib.context import CryptContext
 
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger('passlib')
+logger.setLevel(logging.ERROR)
 
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
