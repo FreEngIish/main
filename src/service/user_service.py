@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import HTTPException, status
 
 from db.models.user import User
@@ -36,9 +38,19 @@ class UserService:
             email=saved_user.email,
             username=saved_user.username,
             first_name=saved_user.first_name,
-            last_name=saved_user.last_name,
-            date_joined=saved_user.date_joined,
-            is_active=saved_user.is_active,
-            is_staff=saved_user.is_staff,
-            auth0_sub=saved_user.auth0_sub
+            last_name=saved_user.last_name
+        )
+
+    async def get_user_show(self, user_id: int) -> Optional[ShowUser]:
+        """Retrieves a user's details by ID and returns it as ShowUser."""
+        user = await self.user_repo.get_user_by_id(user_id=user_id)
+        if user is None:
+            return None
+
+        return ShowUser(
+            id=user.id,
+            email=user.email,
+            username=user.username,
+            first_name=user.first_name,
+            last_name=user.last_name
         )

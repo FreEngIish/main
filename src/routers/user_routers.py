@@ -4,7 +4,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.exc import IntegrityError
 from starlette import status
 
-from dependencies import get_user_service
+from db.models.user import User
+from dependencies import get_current_user, get_user_service
 from schemas.auth_schemas import CreateUserRequest, ShowUser
 from service.user_service import UserService
 
@@ -29,8 +30,21 @@ async def create_user(user_data: CreateUserRequest, user_service: UserService = 
         raise HTTPException(status_code=400, detail=f'Database error: {err}')
 
 
-# @router.get('/', status_code=status.HTTP_200_OK)
-# async def user(user: user_dependency, db: db_dependency):  # noqa: ARG001
-#     if user is None:
-#         raise HTTPException(status_code=401, detail='Authentication Failed')
-#     return {'User': user}
+@router.get('/', status_code=status.HTTP_200_OK, response_model=ShowUser)
+async def get_user(
+    current_user: User = Depends(get_current_user),
+    user_service: UserService = Depends(get_user_service),
+) -> ShowUser:
+    """
+    Retrieve the details of the current user.
+
+    This endpoint returns the details of the currently authenticated user.
+    The user is identified by the token provided in the Authorization header.
+    """
+    if current_user is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='User not found')
+
+    user = await user_service.get_user_show(user_id=current_user.id)
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found')
+    return user

@@ -9,7 +9,7 @@ from service.auth_service import AuthService
 from service.user_service import UserService
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login/token')
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='auth/token')
 
 
 def get_user_repository(session: AsyncSession = Depends(get_db)) -> UserRepository:
