@@ -5,8 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from db.database import get_db
 from db.models.user import User
 from repositories.user_repository import UserRepository
-from services.auth_service import AuthService
-from services.user_service import UserService
+from services.auth_services import AuthService
+from services.user_services import UserService
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='auth/token')
