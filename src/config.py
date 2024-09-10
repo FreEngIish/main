@@ -12,9 +12,11 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ALGORITHM: str
     DATABASE_URL: str = f'sqlite+aiosqlite:///{DB_PATH}'
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
 
     class Config:
         env_file = '.env'
         env_file_encoding = 'utf-8'
+
 
 settings = Settings()

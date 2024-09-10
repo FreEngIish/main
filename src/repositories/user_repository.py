@@ -17,6 +17,15 @@ class UserRepository:
         await self.db_session.refresh(user)
         return user
 
+    async def get_user_by_id(self, user_id: int) -> Optional[User]:
+        """
+        Retrieve a user from the database by their ID.
+        """
+        query = select(User).where(User.id == user_id)
+        result = await self.db_session.execute(query)
+        user = result.scalars().first()
+        return user
+
     async def get_user_by_username(self, username: str) -> Optional[User]:
         """Retrieves a user by their username."""
         query = select(User).where(User.username == username)

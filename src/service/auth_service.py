@@ -1,49 +1,42 @@
-from datetime import datetime, timedelta
-from typing import Annotated, Dict, Optional
+from typing import Optional
 
-from fastapi import Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import HTTPException
 from jose import JWTError, jwt
-from passlib.context import CryptContext
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
 from starlette import status
 
-from db.models.user import User
 from config import settings
+from db.models.user import User
+from hashing import Hasher
+from repositories.user_repository import UserRepository
+from schemas.auth_schemas import TokenData
 
 
 class AuthService:
-    def __init__(self):
-        self.bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
+    def __init__(self, user_repo: UserRepository):
+        self.user_repo = user_repo
 
-    async def get_current_user(token: Annotated[
-        str, Depends(OAuth2PasswordBearer(tokenUrl='auth/token'))
-        ]
-        ) -> Dict[str, Optional[str]]:
+    async def authenticate_user(self, username: str, password: str) -> Optional[User]:
+        user = await self.user_repo.get_user_by_username(username=username)
+        if not user or not Hasher.verify_password(password, user.hashed_password):
+            return None
+        return user
+
+    async def get_current_user_from_token(self, token: str) -> User:
+        credentials_exception = HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='Could not validate user.',
+        )
         try:
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
             username: str = payload.get('sub')
             user_id: int = payload.get('id')
             if username is None or user_id is None:
-                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                                    detail='Could not validate user.')
-            return {'username': username, 'id': user_id}
+                raise credentials_exception
+            token_data = TokenData(username=username, id=user_id)
         except JWTError:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate user.')
+            raise credentials_exception
+        user = await self.user_repo.get_user_by_username(username=token_data.username)
+        if user is None:
+            raise credentials_exception
 
-    async def authenticate_user(self, username: str, password: str, db: AsyncSession) -> Optional[User]:
-        stmt = select(User).filter(User.username == username)
-        result = await db.execute(stmt)
-        user = result.scalars().first()
-        if not user or not self.bcrypt_context.verify(password, user.hashed_password):
-            return None
         return user
-
-    def create_access_token(self, username: str, user_id: int, expires_delta: timedelta) -> str:
-        encode = {'sub': username, 'id': user_id}
-        expires = datetime.utcnow() + expires_delta
-        encode.update({'exp': expires})
-        return jwt.encode(encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
-
-auth_service = AuthService()

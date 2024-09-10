@@ -12,6 +12,10 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
+class TokenData(BaseModel):
+    id: int
+    username: str
+
 class ShowUser(BaseModel):
     id: int
     email: EmailStr
