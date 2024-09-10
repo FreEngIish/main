@@ -7,7 +7,7 @@ from starlette import status
 from db.models.user import User
 from dependencies import get_current_user, get_user_service
 from schemas.auth_schemas import CreateUserRequest, ShowUser
-from service.user_service import UserService
+from services.user_service import UserService
 
 
 logger = logging.getLogger(__name__)

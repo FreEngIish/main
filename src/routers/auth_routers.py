@@ -8,7 +8,7 @@ from auth import create_access_token
 from config import settings
 from dependencies import get_auth_service
 from schemas.auth_schemas import Token
-from service.auth_service import AuthService
+from services.auth_service import AuthService
 
 
 router = APIRouter(
