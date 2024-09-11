@@ -5,7 +5,7 @@ from fastapi import HTTPException, status
 from db.models.user import User
 from hashing import Hasher
 from repositories.user_repository import UserRepository
-from schemas.auth_schemas import CreateUserRequest, ShowUser
+from schemas.user_schemas import CreateUserRequest, ShowUser
 
 
 class UserService:

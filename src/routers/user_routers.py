@@ -6,7 +6,7 @@ from starlette import status
 
 from db.models.user import User
 from dependencies import get_current_user, get_user_service
-from schemas.auth_schemas import CreateUserRequest, ShowUser
+from schemas.user_schemas import CreateUserRequest, ShowUser
 from services.user_services import UserService
 
 
