@@ -12,9 +12,9 @@ class CreateUserRequest(BaseModel):
 
 
 class UpdateUserRequest(BaseModel):
+    password: str
     first_name: Optional[str] = None
     last_name: Optional[str] = None
-    is_active: Optional[bool] = None
 
 
 class ShowUser(BaseModel):

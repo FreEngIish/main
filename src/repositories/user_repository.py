@@ -37,3 +37,15 @@ class UserRepository:
         query = select(User).where(User.email == email)
         result = await self.db_session.execute(query)
         return result.scalars().first()
+    
+    async def update_user(self, user: User) -> User:
+        """Updates an existing user in the database."""
+        self.db_session.add(user)
+        await self.db_session.commit()
+        await self.db_session.refresh(user)
+        return user
+
+    async def delete_user(self, user: User) -> None:
+        """Deletes a user from the database."""
+        await self.db_session.delete(user)
+        await self.db_session.commit()

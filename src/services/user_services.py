@@ -5,7 +5,7 @@ from fastapi import HTTPException, status
 from db.models.user import User
 from hashing import Hasher
 from repositories.user_repository import UserRepository
-from schemas.user_schemas import CreateUserRequest, ShowUser
+from schemas.user_schemas import CreateUserRequest, ShowUser, UpdateUserRequest
 
 
 class UserService:
@@ -54,3 +54,39 @@ class UserService:
             first_name=user.first_name,
             last_name=user.last_name
         )
+
+    async def update_user(self, user_id: int, update_data: UpdateUserRequest) -> ShowUser:
+        """Updates an existing user in the database."""
+        user = await self.user_repo.get_user_by_id(user_id)
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail='User not found'
+            )
+
+        user.first_name = update_data.first_name or user.first_name
+        user.last_name = update_data.last_name or user.last_name
+
+        if update_data.password:
+            user.hashed_password = Hasher.get_password_hash(update_data.password)
+
+        updated_user = await self.user_repo.update_user(user)
+
+        return ShowUser(
+            id=updated_user.id,
+            email=updated_user.email,
+            username=updated_user.username,
+            first_name=updated_user.first_name,
+            last_name=updated_user.last_name
+        )
+
+    async def delete_user(self, user_id: int):
+        """Deletes a user from the database."""
+        user = await self.user_repo.get_user_by_id(user_id)
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail='User not found'
+            )
+
+        await self.user_repo.delete_user(user)
