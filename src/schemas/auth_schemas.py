@@ -1,15 +1,11 @@
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 
-
-class CreateUserRequest(BaseModel):
-    username: str
-    password: str
-    email: EmailStr
 
 class Token(BaseModel):
     access_token: str
+    refresh_token: str
     token_type: str
 
 class TokenData(BaseModel):
@@ -25,3 +21,6 @@ class ShowUser(BaseModel):
 
     class Config:
         orm_mode = True
+
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str
