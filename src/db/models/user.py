@@ -2,7 +2,7 @@ from sqlalchemy import Boolean, Column, DateTime, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-from src.db.database import Base
+from db.database import Base
 
 
 class User(Base):
@@ -25,3 +25,6 @@ class User(Base):
 
     def __repr__(self):
         return f'<User(email={self.email}, username={self.username})>'
+
+
+
