@@ -8,7 +8,7 @@ from db.database import get_db
 from dependencies import get_current_user
 from repositories.user_room_repository import UserRoomRepository
 from schemas.user_room_schemas import UserRoomResponseSchema
-from websocket.connection_manager import ConnectionManager
+from websocket.socket_service import ConnectionManager
 
 
 router = APIRouter()
