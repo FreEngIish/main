@@ -16,7 +16,7 @@ class UserRoomCreateSchema(BaseModel):
     room_name: str
     native_language: str
     language_level: Optional[LanguageLevel] = LanguageLevel.beginner
-    participant_limit: Optional[conint(ge=2, le=10)] = 10
+    participant_limit: Optional[conint(ge=2, le=10)] = 10 # type: ignore
 
     model_config = ConfigDict(from_attributes=True) # ORM MODE Pydantic2.0 Версія
 
@@ -25,7 +25,7 @@ class UserRoomUpdateSchema(BaseModel):
     room_name: Optional[str] = None
     native_language: Optional[str] = None
     language_level: Optional[LanguageLevel] = None
-    participant_limit: Optional[conint(ge=2, le=10)] = None
+    participant_limit: Optional[conint(ge=2, le=10)] = None # type: ignore
     status: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True) # ORM MODE Pydantic2.0 Версія
