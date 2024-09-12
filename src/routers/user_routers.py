@@ -76,4 +76,4 @@ async def delete_user(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='User not authenticated')
 
     await user_service.delete_user(user_id=current_user.id)
-    return {"detail": "User deleted successfully"}
+    return {'detail': 'User deleted successfully'}
