@@ -7,7 +7,7 @@ from db.models.user import User
 from repositories.user_repository import UserRepository
 from repositories.user_room_repository import UserRoomRepository
 from services.auth_services import AuthService
-from services.room_service import RoomService
+from services.room_service import RoomManagerService
 from services.socket_service import ConnectionManager
 from services.user_services import UserService
 
@@ -93,18 +93,18 @@ async def get_user_room_repository(db: AsyncSession = Depends(get_db)) -> UserRo
     return UserRoomRepository(db)
 
 
-async def get_room_service(
+async def get_room_manager_service(
     room_repo: UserRoomRepository = Depends(get_user_room_repository),
     connection_manager: ConnectionManager = Depends(get_connection_manager),
-) -> RoomService:
+) -> RoomManagerService:
     """
-    Dependency function to get an instance of RoomService.
+    Dependency function to get an instance of RoomManagerService.
 
     Args:
         room_repo (UserRoomRepository): An instance of UserRoomRepository.
         connection_manager (ConnectionManager): An instance of ConnectionManager.
 
     Returns:
-        RoomService: An instance of RoomService.
+        RoomManagerService: An instance of RoomManagerService.
     """
-    return RoomService(room_repo=room_repo, socket_service=connection_manager)
+    return RoomManagerService(room_repo=room_repo, socket_service=connection_manager)

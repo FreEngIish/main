@@ -2,28 +2,20 @@ from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisco
 from starlette import status
 
 from db import User
-from dependencies import get_current_user, get_room_service
+from dependencies import get_current_user, get_room_manager_service
 from schemas.user_room_schemas import UserRoomCreateSchema
-from services.room_service import RoomService
+from services.room_service import RoomManagerService
 
 
 router = APIRouter()
 
 
 @router.websocket('/ws/rooms')
-async def websocket_endpoint(websocket: WebSocket, room_service: RoomService = Depends(get_room_service)):
+async def websocket_endpoint(
+    websocket: WebSocket, room_service: RoomManagerService = Depends(get_room_manager_service)
+):
     """
     WebSocket endpoint to handle room updates and communicate with clients.
-
-    Args:
-        websocket (WebSocket): The WebSocket connection instance.
-        room_service (RoomService): An instance of RoomService for room operations.
-
-    This endpoint:
-    - Accepts a WebSocket connection.
-    - Sends a list of all rooms in JSON format to the connected client.
-    - Keeps the connection open and waits for messages from the client.
-    - Disconnects and cleans up when the WebSocket connection is closed.
     """
     await room_service.socket_service.connect(websocket, room_id=0)
     try:
@@ -40,25 +32,11 @@ async def websocket_endpoint(websocket: WebSocket, room_service: RoomService = D
 @router.post('/rooms/', response_model=UserRoomCreateSchema, status_code=status.HTTP_201_CREATED)
 async def create_room(
     room_create_request: UserRoomCreateSchema,
-    room_service: RoomService = Depends(get_room_service),
+    room_service: RoomManagerService = Depends(get_room_manager_service),
     current_user: User = Depends(get_current_user),
 ):
     """
     Create a new room and notify all connected clients about the update.
-
-    Args:
-        room_create_request (UserRoomCreateSchema): The details of the room to be created.
-        room_service (RoomService): An instance of RoomService for room operations.
-        current_user (User): The currently authenticated user creating the room.
-
-    Returns:
-        UserRoomCreateSchema: The newly created room object.
-
-    Raises:
-        HTTPException:
-            - If room creation fails or other issues occur.
-            - If the user is not authenticated.
-            - If invalid input is provided.
     """
     if current_user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='User not found or not authenticated')
