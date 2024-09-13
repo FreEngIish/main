@@ -44,7 +44,7 @@ class UserService:
         """Retrieves a user's details by ID and returns it as ShowUser."""
         user = await self.user_repo.get_user_by_id(user_id=user_id)
         if user is None:
-            return None
+            raise ValueError('User not found')
 
         return ShowUser(
             id=user.id, email=user.email, username=user.username, first_name=user.first_name, last_name=user.last_name

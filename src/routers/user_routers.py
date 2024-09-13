@@ -46,9 +46,13 @@ async def get_user(
     This endpoint returns the details of the currently authenticated user.
     The user is identified by the token provided in the Authorization header.
     """
-    user = await user_service.get_user_show(user_id=current_user.id)
-    if user is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found')
+    try:
+        user = await user_service.get_user_show(user_id=current_user.id)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    except Exception as e:
+        logger.error(f'Unexpected error occurred: {e}')
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='An unexpected error occurred')
     return user
 
 
