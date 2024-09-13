@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
 from starlette import status
 
@@ -5,6 +7,10 @@ from db import User
 from dependencies import get_current_user, get_room_manager_service
 from schemas.user_room_schemas import UserRoomCreateSchema
 from services.room_service import RoomManagerService
+
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 router = APIRouter()
@@ -22,11 +28,12 @@ async def websocket_endpoint(
         rooms_data = await room_service.get_all_rooms()
         rooms_json = [room.json() for room in rooms_data]
         await websocket.send_text(f"[{','.join(rooms_json)}]")
-
         while True:
             await websocket.receive_text()
     except WebSocketDisconnect:
         await room_service.socket_service.disconnect(websocket, room_id=0)
+    except Exception as e:
+        logger.error(f'Error during WebSocket communication: {e}')
 
 
 @router.post('/rooms/', response_model=UserRoomCreateSchema, status_code=status.HTTP_201_CREATED)
@@ -49,8 +56,10 @@ async def create_room(
 
     try:
         new_room = await room_service.create_room(room_request=room_create_request, creator=current_user)
-    except Exception:
+    except Exception as e:
+        logger.error(f'Error occurred while creating the room: {e}')
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='An error occurred while creating the room'
         )
+
     return new_room
