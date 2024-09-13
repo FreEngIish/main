@@ -54,7 +54,7 @@ class UserService:
         """Updates an existing user in the database."""
         user = await self.user_repo.get_user_by_id(user_id)
         if user is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found')
+            raise ValueError('User not found')
 
         user.first_name = update_data.first_name or user.first_name
         user.last_name = update_data.last_name or user.last_name

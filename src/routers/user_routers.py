@@ -46,9 +46,6 @@ async def get_user(
     This endpoint returns the details of the currently authenticated user.
     The user is identified by the token provided in the Authorization header.
     """
-    if current_user is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='User not found')
-
     user = await user_service.get_user_show(user_id=current_user.id)
     if user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found')
@@ -64,10 +61,14 @@ async def update_user(
     """
     Update the current user's information.
     """
-    if current_user is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='User not authenticated')
-
-    return await user_service.update_user(user_id=current_user.id, update_data=update_data)
+    try:
+        return await user_service.update_user(user_id=current_user.id, update_data=update_data)
+    except ValueError as err:
+        logger.error(f'Value error occurred: {err}')
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(err))
+    except Exception as e:
+        logger.error(f'Unexpected error occurred: {e}')
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='An unexpected error occurred')
 
 
 @router.delete('/', status_code=status.HTTP_204_NO_CONTENT)
