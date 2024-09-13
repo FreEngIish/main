@@ -82,8 +82,12 @@ async def delete_user(
     """
     Delete the current user.
     """
-    if current_user is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='User not authenticated')
+    try:
+        await user_service.delete_user(user_id=current_user.id)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    except Exception as e:
+        logger.error(f'Unexpected error occurred: {e}')
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail='An unexpected error occurred')
 
-    await user_service.delete_user(user_id=current_user.id)
     return {'detail': 'User deleted successfully'}

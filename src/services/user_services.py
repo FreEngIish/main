@@ -1,7 +1,5 @@
 from typing import Optional
 
-from fastapi import HTTPException, status
-
 from db.models.user import User
 from hashing import Hasher
 from repositories.user_repository import UserRepository
@@ -76,6 +74,6 @@ class UserService:
         """Deletes a user from the database."""
         user = await self.user_repo.get_user_by_id(user_id)
         if user is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User not found')
+            raise ValueError('User not found')
 
         await self.user_repo.delete_user(user)
