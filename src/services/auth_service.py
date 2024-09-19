@@ -4,11 +4,15 @@ import aiohttp
 
 from repositories.auth_repository import AuthRepository
 from schemas.auth_schemas import GoogleLoginResponse
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from repositories.user_repository import UserRepository
 
 
 class AuthService:
-    def __init__(self, auth_repository: AuthRepository):
+    def __init__(self, auth_repository: AuthRepository, db: AsyncSession):
         self.auth_repository = auth_repository
+        self.db = db
 
     async def authenticate_user(self, code: str) -> GoogleLoginResponse:
         token_info = await self.auth_repository.get_tokens(code)
@@ -27,6 +31,12 @@ class AuthService:
         async with aiohttp.ClientSession() as session:
             async with session.get(user_info_url, headers={'Authorization': f'Bearer {access_token}'}) as resp:
                 user_info = await resp.json()
+
+        # Сохранение пользователя в базу данных
+        user_repo = UserRepository(self.db)
+        user = await user_repo.get_user_by_email(user_info['email'])
+        if not user:
+            user = await user_repo.create_user(email=user_info['email'], name=user_info['name'])
 
         return GoogleLoginResponse(
             access_token=access_token,
