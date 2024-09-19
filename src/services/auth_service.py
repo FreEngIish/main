@@ -3,7 +3,7 @@ import time
 import aiohttp
 
 from repositories.auth_repository import AuthRepository
-from schemas.auth_schemas import GoogleLoginResponse
+from schemas.auth_schemas import GoogleLoginResponse, UserInfo
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from repositories.user_repository import UserRepository
@@ -30,13 +30,28 @@ class AuthService:
         user_info_url = 'https://www.googleapis.com/oauth2/v1/userinfo'
         async with aiohttp.ClientSession() as session:
             async with session.get(user_info_url, headers={'Authorization': f'Bearer {access_token}'}) as resp:
-                user_info = await resp.json()
+                user_info_data = await resp.json()
 
-        # Сохранение пользователя в базу данных
+        user_info = UserInfo(
+            google_sub=user_info_data['id'],
+            email=user_info_data['email'],
+            first_name=user_info_data.get('given_name', ''),
+            last_name=user_info_data.get('family_name', ''),
+            picture=user_info_data.get('picture', ''),
+            locale=user_info_data.get('locale', '')
+        )
+
         user_repo = UserRepository(self.db)
-        user = await user_repo.get_user_by_email(user_info['email'])
+        user = await user_repo.get_user_by_email(user_info.email)
         if not user:
-            user = await user_repo.create_user(email=user_info['email'], name=user_info['name'])
+            user = await user_repo.create_user(
+            email=user_info.email,
+            first_name=user_info.first_name,
+            last_name=user_info.last_name,
+            google_sub = user_info.google_sub,
+            picture = user_info.picture,
+            locale = user_info.locale 
+        )
 
         return GoogleLoginResponse(
             access_token=access_token,

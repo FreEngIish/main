@@ -11,8 +11,6 @@ from db.database import get_db
 from repositories import auth_repository
 
 router = APIRouter()
-# auth_repository = AuthRepository(settings.google_client_id, settings.google_client_secret, settings.google_redirect_uri)
-# auth_service = AuthService(auth_repository)
 auth_repository = AuthRepository(
     client_id=settings.google_client_id,
     client_secret=settings.google_client_secret,

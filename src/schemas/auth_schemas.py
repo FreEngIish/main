@@ -3,7 +3,11 @@ from pydantic import BaseModel
 
 class UserInfo(BaseModel):
     email: str
-    name: str
+    google_sub: str
+    first_name: str
+    last_name: str
+    picture: str
+    locale: str
 
 class GoogleLoginResponse(BaseModel):
     access_token: str
