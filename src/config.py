@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     ALGORITHM: str
     DATABASE_URL: str = f'sqlite+aiosqlite:///{DB_PATH}'
     ACCESS_TOKEN_EXPIRE_MINUTES: int
+    google_client_id: str
+    google_client_secret: str
+    google_redirect_uri: str
 
     class Config:
         env_file = '.env'
