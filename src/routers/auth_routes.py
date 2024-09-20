@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,6 +10,10 @@ from repositories.auth_repository import AuthRepository
 from schemas.auth_schemas import GoogleLoginResponse
 from services.auth_service import AuthService
 
+
+# Configure basic logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -26,6 +32,7 @@ async def google_login():
         f'&redirect_uri={settings.google_redirect_uri}&response_type=code'
         f'&scope=openid email profile&access_type=offline&approval_prompt=force'
     )
+    logger.info('Redirecting user to Google login page.')
     return RedirectResponse(url=google_auth_url)
 
 @router.get('/auth/oauth/login-success', response_model=GoogleLoginResponse)
@@ -36,6 +43,10 @@ async def auth_google(
 ):
     auth_service = AuthService(auth_repository, db)
     try:
-        return await auth_service.authenticate_user(code)
+        logger.info(f'Received OAuth code: {code}')
+        response = await auth_service.authenticate_user(code)
+        logger.info('User successfully authenticated with Google.')
+        return response
     except Exception as e:
+        logger.error(f'Failed to authenticate user: {e}')
         raise HTTPException(status_code=400, detail=str(e))
