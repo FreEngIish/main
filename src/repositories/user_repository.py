@@ -1,6 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+
 from db.models.user import User
+
 
 class UserRepository:
     def __init__(self, db: AsyncSession):
@@ -10,7 +12,7 @@ class UserRepository:
         result = await self.db.execute(select(User).where(User.email == email))
         return result.scalars().first()
 
-    async def create_user(self, email: str, first_name: str, last_name: str, google_sub: str, picture: str, locale: str):
+    async def create_user(self, email: str, first_name: str, last_name: str, google_sub: str, picture: str, locale: str):  # noqa: E501
         new_user = User(
             email=email,
             first_name=first_name,

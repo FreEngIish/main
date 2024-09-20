@@ -1,12 +1,11 @@
 import time
 
 import aiohttp
-
-from repositories.auth_repository import AuthRepository
-from schemas.auth_schemas import GoogleLoginResponse, UserInfo
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from repositories.auth_repository import AuthRepository
 from repositories.user_repository import UserRepository
+from schemas.auth_schemas import GoogleLoginResponse, UserInfo
 
 
 class AuthService:
@@ -50,7 +49,7 @@ class AuthService:
             last_name=user_info.last_name,
             google_sub = user_info.google_sub,
             picture = user_info.picture,
-            locale = user_info.locale 
+            locale = user_info.locale
         )
 
         return GoogleLoginResponse(
