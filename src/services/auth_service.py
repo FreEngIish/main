@@ -43,7 +43,7 @@ class AuthService:
         user_repo = UserRepository(self.db)
         user = await user_repo.get_user_by_email(user_info.email)
         if not user:
-            user = await user_repo.create_user(
+            await user_repo.create_user(
             email=user_info.email,
             first_name=user_info.first_name,
             last_name=user_info.last_name,
