@@ -1,7 +1,6 @@
 import time
 
 import aiohttp
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from repositories.auth_repository import AuthRepository
 from repositories.user_repository import UserRepository
@@ -9,9 +8,9 @@ from schemas.auth_schemas import GoogleLoginResponse, UserInfo
 
 
 class AuthService:
-    def __init__(self, auth_repository: AuthRepository, db: AsyncSession):
+    def __init__(self, auth_repository: AuthRepository, user_repository: UserRepository):
         self.auth_repository = auth_repository
-        self.db = db
+        self.user_repository = user_repository
 
     async def authenticate_user(self, code: str) -> GoogleLoginResponse:
         token_info = await self.auth_repository.get_tokens(code)
@@ -40,17 +39,16 @@ class AuthService:
             locale=user_info_data.get('locale', '')
         )
 
-        user_repo = UserRepository(self.db)
-        user = await user_repo.get_user_by_email(user_info.email)
+        user = await self.user_repository.get_user_by_email(user_info.email)
         if not user:
-            await user_repo.create_user(
-            email=user_info.email,
-            first_name=user_info.first_name,
-            last_name=user_info.last_name,
-            google_sub = user_info.google_sub,
-            picture = user_info.picture,
-            locale = user_info.locale
-        )
+            await self.user_repository.create_user(
+                email=user_info.email,
+                first_name=user_info.first_name,
+                last_name=user_info.last_name,
+                google_sub=user_info.google_sub,
+                picture=user_info.picture,
+                locale=user_info.locale
+            )
 
         return GoogleLoginResponse(
             access_token=access_token,
