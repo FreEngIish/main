@@ -20,13 +20,7 @@ async def refresh_access_token(refresh_token: str):
     logger.info(f'Received request to refresh token: {refresh_token}')
     try:
         response = await auth_service.refresh_access_token(refresh_token)
-        # Log successful token refresh
-        logger.info('Token successfully refreshed.')
         return response
-    except HTTPException as e:
-        # Log HTTP exceptions with detail
-        logger.error(f'HTTPException during token refresh: {e.detail}')
-        raise e
     except Exception as e:
         # Log any other exceptions
         logger.error(f'Error during token refresh: {str(e)}')
