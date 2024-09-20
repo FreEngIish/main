@@ -16,8 +16,6 @@ auth_service = AuthService(auth_repository)
 
 @router.post('/auth/oauth/token/refresh')
 async def refresh_access_token(refresh_token: str):
-    # Log the incoming refresh token request
-    logger.info(f'Received request to refresh token: {refresh_token}')
     try:
         response = await auth_service.refresh_access_token(refresh_token)
         return response
