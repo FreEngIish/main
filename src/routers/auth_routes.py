@@ -2,32 +2,20 @@ import logging
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import RedirectResponse
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from config import settings
-from db.database import get_db
+from dependencies import get_auth_repository, get_user_repository
 from repositories.auth_repository import AuthRepository
 from repositories.user_repository import UserRepository
 from schemas.auth_schemas import GoogleLoginResponse
 from services.auth_service import AuthService
 
 
-# Define a function to provide UserRepository as a dependency
-def get_user_repository(db: AsyncSession = Depends(get_db)) -> UserRepository:
-    return UserRepository(db=db)
-
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-# Define a function to provide AuthRepository as a dependency
-def get_auth_repository() -> AuthRepository:
-    return AuthRepository(
-        client_id=settings.google_client_id,
-        client_secret=settings.google_client_secret,
-        redirect_uri=settings.google_redirect_uri
-    )
 
 @router.get('/auth/login/google')
 async def google_login():

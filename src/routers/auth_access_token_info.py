@@ -1,13 +1,12 @@
 from fastapi import APIRouter, Depends
-from fastapi.security import OAuth2PasswordBearer
 
+from dependencies import oauth2_scheme
 from validators import validate_access_token
 
 
 router = APIRouter()
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/auth/login/google')
 
 @router.get('/auth/protected')
 async def protected_route(token: str = Depends(oauth2_scheme)):

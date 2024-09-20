@@ -2,27 +2,20 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from config import settings
 from db.database import get_db
-from db.models.user import User
+from repositories.auth_repository import AuthRepository
 from repositories.user_repository import UserRepository
-from services.auth_services import AuthService
-from services.user_services import UserService
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl='auth/token')
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/auth/login/google')
 
+def get_user_repository(db: AsyncSession = Depends(get_db)) -> UserRepository:
+    return UserRepository(db=db)
 
-def get_user_repository(session: AsyncSession = Depends(get_db)) -> UserRepository:
-    return UserRepository(session=session)
-
-async def get_user_service(user_repo: UserRepository = Depends(get_user_repository)) -> UserService:
-    return UserService(user_repo=user_repo)
-
-async def get_auth_service(user_repo: UserRepository = Depends(get_user_repository)) -> AuthService:
-    return AuthService(user_repo=user_repo)
-
-async def get_current_user(
-    auth_service: AuthService = Depends(get_auth_service), token: str = Depends(oauth2_scheme)
-) -> User:
-    return await auth_service.get_current_user_from_token(token=token)
-
+def get_auth_repository() -> AuthRepository:
+    return AuthRepository(
+        client_id=settings.google_client_id,
+        client_secret=settings.google_client_secret,
+        redirect_uri=settings.google_redirect_uri
+    )
