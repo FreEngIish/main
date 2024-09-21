@@ -43,3 +43,17 @@ async def update_room(
     if not update_room:
         raise HTTPException(status_code=404, detail='Room not found or permission denied')
     return updated_room
+
+@router.patch('/rooms/{room_id}', response_model=UserRoomResponseSchema)
+async def partial_update_room(
+    room_id: int,
+    room_data: UserRoomUpdateSchema,
+    db: AsyncSession = Depends(get_db),
+    current_user: int = Depends(get_current_user)
+):
+    user_room_repo = UserRoomRepository(db)
+    service = UserRoomService(user_room_repo)
+    updated_room = await service.update_room(room_id, room_data, current_user)
+    if not updated_room:
+        raise HTTPException(status_code=404, detail='Room not found or permission denied')
+    return updated_room
