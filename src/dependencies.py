@@ -6,6 +6,8 @@ from config import settings
 from db.database import get_db
 from repositories.auth_repository import AuthRepository
 from repositories.user_repository import UserRepository
+from repositories.user_room_repository import UserRoomRepository
+from services.user_room_service import UserRoomService
 from validators import validate_access_token
 
 
@@ -26,11 +28,12 @@ async def get_current_user(
     user_repository: UserRepository = Depends(get_user_repository)
 ):
     token_data = await validate_access_token(token)
-
     # We assume that the email is in token_data
     user = await user_repository.get_user_by_email(token_data['email'])
-
     if user is None:
         raise HTTPException(status_code=404, detail='User not found')
-
     return user.id
+
+async def get_user_room_service(db: AsyncSession = Depends(get_db)) -> UserRoomService:
+    user_room_repo = UserRoomRepository(db)
+    return UserRoomService(user_room_repo)
