@@ -10,7 +10,7 @@ from services.auth_token_service import AuthService
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-router = APIRouter()
+router = APIRouter(tags=['Auth'])
 auth_repository = AuthRepository(settings.google_client_id, settings.google_client_secret, settings.google_redirect_uri)
 auth_service = AuthService(auth_repository)
 

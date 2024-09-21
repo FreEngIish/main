@@ -5,7 +5,7 @@ from schemas.user_room_schemas import UserRoomCreateSchema, UserRoomResponseSche
 from services.user_room_service import UserRoomService
 
 
-router = APIRouter()
+router = APIRouter(tags=['UserRoom'])
 
 @router.post('/rooms/', response_model=UserRoomResponseSchema)
 async def create_room(

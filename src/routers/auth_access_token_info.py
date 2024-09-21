@@ -4,7 +4,7 @@ from dependencies import oauth2_scheme
 from validators import validate_access_token
 
 
-router = APIRouter()
+router = APIRouter(tags=['Auth'])
 
 
 
