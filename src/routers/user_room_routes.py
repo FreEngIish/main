@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 
 from dependencies import get_current_user, get_user_room_service
+from exceptions import PermissionDeniedException, RoomNotFoundException
 from schemas.user_room_schemas import UserRoomCreateSchema, UserRoomResponseSchema, UserRoomUpdateSchema
 from services.user_room_service import UserRoomService
 
@@ -21,10 +22,11 @@ async def get_room(
     room_id: int,
     service: UserRoomService = Depends(get_user_room_service)
 ):
-    room = await service.get_room(room_id)
-    if not room:
+    try:
+        room = await service.get_room(room_id)
+        return room
+    except RoomNotFoundException:
         raise HTTPException(status_code=404, detail='Room not found')
-    return room
 
 @router.put('/rooms/{room_id}', response_model=UserRoomResponseSchema)
 async def update_room(
@@ -33,10 +35,13 @@ async def update_room(
     current_user: int = Depends(get_current_user),
     service: UserRoomService = Depends(get_user_room_service)
 ):
-    updated_room = await service.update_room(room_id, room_data, current_user)
-    if not updated_room:
-        raise HTTPException(status_code=404, detail='Room not found or permission denied')
-    return updated_room
+    try:
+        updated_room = await service.update_room(room_id, room_data, current_user)
+        return updated_room
+    except RoomNotFoundException:
+        raise HTTPException(status_code=404, detail='Room not found')
+    except PermissionDeniedException:
+        raise HTTPException(status_code=403, detail='Permission denied')
 
 @router.patch('/rooms/{room_id}', response_model=UserRoomResponseSchema)
 async def partial_update_room(
@@ -45,7 +50,10 @@ async def partial_update_room(
     current_user: int = Depends(get_current_user),
     service: UserRoomService = Depends(get_user_room_service)
 ):
-    updated_room = await service.update_room(room_id, room_data, current_user)
-    if not updated_room:
-        raise HTTPException(status_code=404, detail='Room not found or permission denied')
-    return updated_room
+    try:
+        updated_room = await service.update_room(room_id, room_data, current_user)
+        return updated_room
+    except RoomNotFoundException:
+        raise HTTPException(status_code=404, detail='Room not found')
+    except PermissionDeniedException:
+        raise HTTPException(status_code=403, detail='Permission denied')
