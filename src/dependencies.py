@@ -7,6 +7,7 @@ from db.database import get_db
 from repositories.auth_repository import AuthRepository
 from repositories.user_repository import UserRepository
 from repositories.user_room_repository import UserRoomRepository
+from services.auth_token_service import AuthService
 from services.user_room_service import UserRoomService
 from validators import validate_access_token
 
@@ -22,6 +23,9 @@ def get_auth_repository() -> AuthRepository:
         client_secret=settings.google_client_secret,
         redirect_uri=settings.google_redirect_uri
     )
+
+def get_auth_token_service(auth_repository: AuthRepository = Depends(get_auth_repository)) -> AuthService:
+    return AuthService(auth_repository)
 
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
