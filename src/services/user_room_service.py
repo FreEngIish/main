@@ -1,7 +1,9 @@
 from exceptions import (
     PermissionDeniedException,
     RoomCreationException,
+    RoomGetException,
     RoomNotFoundException,
+    RoomUpdateException,
 )
 from repositories.user_room_repository import UserRoomRepository
 from schemas.user_room_schemas import UserRoomCreateSchema, UserRoomUpdateSchema
@@ -20,11 +22,11 @@ class UserRoomService:
     async def get_room(self, room_id: int):
         try:
             return await self.user_room_repository.get_room_by_id(room_id)
-        except RoomNotFoundException:
+        except (RoomNotFoundException, RoomGetException):
             raise
 
     async def update_room(self, room_id: int, room_data: UserRoomUpdateSchema, creator_id: int):
         try:
             return await self.user_room_repository.update_room(room_id, room_data, creator_id)
-        except (RoomNotFoundException, PermissionDeniedException):
+        except (RoomNotFoundException, PermissionDeniedException, RoomUpdateException):
             raise
