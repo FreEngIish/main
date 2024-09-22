@@ -1,7 +1,7 @@
 from repositories.auth_repository import AuthRepository
 
 
-class AuthService:
+class AuthTokenService:
     def __init__(self, auth_repository: AuthRepository):
         self.auth_repository = auth_repository
 

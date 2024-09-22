@@ -4,9 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import RedirectResponse
 
 from config import settings
-from dependencies import get_auth_repository, get_user_repository
-from repositories.auth_repository import AuthRepository
-from repositories.user_repository import UserRepository
+from dependencies import get_auth_service
 from schemas.auth_schemas import GoogleLoginResponse
 from services.auth_service import AuthService
 
@@ -14,7 +12,7 @@ from services.auth_service import AuthService
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-router = APIRouter()
+router = APIRouter(tags=['Auth'])
 
 
 @router.get('/auth/login/google')
@@ -29,10 +27,8 @@ async def google_login():
 @router.get('/auth/oauth/login-success', response_model=GoogleLoginResponse)
 async def auth_google(
     code: str,
-    auth_repository: AuthRepository = Depends(get_auth_repository),
-    user_repository: UserRepository = Depends(get_user_repository)
+    auth_service: AuthService = Depends(get_auth_service)
 ):
-    auth_service = AuthService(auth_repository, user_repository)
     try:
         response = await auth_service.authenticate_user(code)
         return response
