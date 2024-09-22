@@ -3,7 +3,7 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException
 
 from dependencies import get_auth_token_service
-from services.auth_token_service import AuthService
+from services.auth_token_service import AuthTokenService
 
 
 logging.basicConfig(level=logging.INFO)
@@ -12,7 +12,10 @@ logger = logging.getLogger(__name__)
 router = APIRouter(tags=['Auth'])
 
 @router.post('/auth/oauth/token/refresh')
-async def refresh_access_token(refresh_token: str, auth_service: AuthService = Depends(get_auth_token_service)):
+async def refresh_access_token(
+    refresh_token: str,
+    auth_service: AuthTokenService = Depends(get_auth_token_service)
+):
     try:
         response = await auth_service.refresh_access_token(refresh_token)
         return response
